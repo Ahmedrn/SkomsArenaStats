@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.0 (2026-10-27)
 
 First release: a 3.3.5a (Warmane) version of ArenaStats by Kallias-Sulfuron, with weekly arena points, all your characters in one window and Solo Queue support.
 

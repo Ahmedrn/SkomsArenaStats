@@ -1,3 +1,5 @@
+<p align="center"><img src="logo.png" alt="SkomsArenaStats" width="120"></p>
+
 # Skom's Arena Stats (WoW 3.3.5a, Warmane)
 
 Every arena you play, recorded. One window shows your week on all your characters: games, wins, rating, honor, and the arena points you will get on reset day.
@@ -26,4 +28,4 @@ Every arena you play, recorded. One window shows your week on all your character
 
 ## Credits
 
-A 3.3.5a backport of **[ArenaStats](https://github.com/denishamann/ArenaStats)** by Kallias-Sulfuron (Denis Hamann), GPL-3.0.
+A 3.3.5a backport of **[ArenaStats](https://github.com/denishamann/ArenaStats)** by Kallias-Sulfuron (Denis Hamann), AGPL-3.0.
