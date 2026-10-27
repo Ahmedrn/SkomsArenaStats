@@ -1,0 +1,16 @@
+## Interface: 30300
+## Title: |cff33ff99Skom's|r Arena Stats
+## Notes: Arena history and a weekly summary of all your characters: games, rating, honor and the arena points coming on reset day. Made for Warmane. Type /as.
+## Author: Skom (3.3.5a backport), Kallias-Sulfuron (original)
+## Version: 0.2.3-335
+## SavedVariables: SkomsArenaStats
+
+embeds.xml
+locales.xml
+
+SkomsArenaStats.lua
+GUI.lua
+Weekly.lua
+HybridScrollFrame.xml
+about.lua
+options.lua

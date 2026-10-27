@@ -1,0 +1,184 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+
+    <!-- 3.3.5a: no relativeKey / x,y shorthand, so regions are named and
+         anchored with relativeTo + AbsDimension; GUI.lua maps the names
+         back onto button.Date, button.Map, ... -->
+    <Frame name="SkomsArenaStatsHybridScrollListItemTemplate" virtual="true">
+        <Size><AbsDimension x="0" y="24"/></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBackground" setAllPoints="true">
+                    <Color r="0" g="0" b="0" a="0.2"/>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+
+                <FontString name="$parentDate" inherits="GameFontHighlightSmall" justifyH="LEFT">
+                    <Size><AbsDimension x="150" y="24"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset><AbsDimension x="4" y="0"/></Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+
+                <FontString name="$parentMap" inherits="GameFontHighlightSmall" justifyH="LEFT">
+                    <Size><AbsDimension x="40" y="24"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentDate" relativePoint="RIGHT"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString name="$parentDuration" inherits="GameFontHighlightSmall" justifyH="LEFT">
+                    <Size><AbsDimension x="98" y="24"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentMap" relativePoint="RIGHT">
+                            <Offset><AbsDimension x="4" y="0"/></Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+
+                <Texture name="$parentIconTeamPlayerClass1">
+                    <Size><AbsDimension x="20" y="20"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentDuration" relativePoint="RIGHT"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture name="$parentIconTeamPlayerClass2">
+                    <Size><AbsDimension x="20" y="20"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentIconTeamPlayerClass1" relativePoint="RIGHT"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture name="$parentIconTeamPlayerClass3">
+                    <Size><AbsDimension x="20" y="20"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentIconTeamPlayerClass2" relativePoint="RIGHT"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture name="$parentIconTeamPlayerClass4">
+                    <Size><AbsDimension x="20" y="20"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentIconTeamPlayerClass3" relativePoint="RIGHT"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture name="$parentIconTeamPlayerClass5">
+                    <Size><AbsDimension x="20" y="20"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentIconTeamPlayerClass4" relativePoint="RIGHT"/>
+                    </Anchors>
+                </Texture>
+
+                <FontString name="$parentRating" inherits="GameFontHighlightSmall" justifyH="LEFT">
+                    <Size><AbsDimension x="60" y="24"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentIconTeamPlayerClass5" relativePoint="RIGHT">
+                            <Offset><AbsDimension x="4" y="0"/></Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+
+                <FontString name="$parentMMR" inherits="GameFontHighlightSmall" justifyH="LEFT">
+                    <Size><AbsDimension x="40" y="24"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentRating" relativePoint="RIGHT">
+                            <Offset><AbsDimension x="8" y="0"/></Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+
+                <Texture name="$parentIconEnemyPlayer1">
+                    <Size><AbsDimension x="20" y="20"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentMMR" relativePoint="RIGHT">
+                            <Offset><AbsDimension x="4" y="0"/></Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+
+                <Texture name="$parentIconEnemyPlayer2">
+                    <Size><AbsDimension x="20" y="20"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentIconEnemyPlayer1" relativePoint="RIGHT"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture name="$parentIconEnemyPlayer3">
+                    <Size><AbsDimension x="20" y="20"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentIconEnemyPlayer2" relativePoint="RIGHT"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture name="$parentIconEnemyPlayer4">
+                    <Size><AbsDimension x="20" y="20"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentIconEnemyPlayer3" relativePoint="RIGHT"/>
+                    </Anchors>
+                </Texture>
+
+                <Texture name="$parentIconEnemyPlayer5">
+                    <Size><AbsDimension x="20" y="20"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentIconEnemyPlayer4" relativePoint="RIGHT"/>
+                    </Anchors>
+                </Texture>
+
+                <FontString name="$parentEnemyMMR" inherits="GameFontHighlightSmall" justifyH="LEFT">
+                    <Size><AbsDimension x="40" y="24"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentIconEnemyPlayer5" relativePoint="RIGHT">
+                            <Offset><AbsDimension x="20" y="0"/></Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+
+                <Texture name="$parentEnemyFaction">
+                    <Size><AbsDimension x="20" y="20"/></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentEnemyMMR" relativePoint="RIGHT">
+                            <Offset><AbsDimension x="50" y="0"/></Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+
+            </Layer>
+            <Layer level="HIGHLIGHT">
+                <Texture name="$parentHighlight" setAllPoints="true" alphaMode="ADD">
+                    <Color r="1" g="0.75" b="0" a="0.2"/>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+
+    <ScrollFrame name="SkomsArenaStatsHybridScrollFrame" inherits="HybridScrollFrameTemplate" virtual="true">
+        <Anchors>
+            <Anchor point="TOPLEFT">
+                <Offset><AbsDimension x="2" y="-2"/></Offset>
+            </Anchor>
+            <Anchor point="BOTTOMRIGHT">
+                <Offset><AbsDimension x="-25" y="7"/></Offset>
+            </Anchor>
+        </Anchors>
+
+        <Frames>
+            <!-- MinimalHybridScrollBarTemplate doesn't exist in 3.3.5a -->
+            <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
+                        <Offset><AbsDimension x="1" y="-16"/></Offset>
+                    </Anchor>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">
+                        <Offset><AbsDimension x="1" y="12"/></Offset>
+                    </Anchor>
+                </Anchors>
+            </Slider>
+        </Frames>
+    </ScrollFrame>
+</Ui>
