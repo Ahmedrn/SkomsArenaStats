@@ -5,16 +5,17 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local AceConfig = LibStub("AceConfig-3.0")
 local AceDBOptions = LibStub("AceDBOptions-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+local TITLE = "Skom's Arena Stats"   -- name in Interface > AddOns
 
 function SkomsArenaStats:OpenOptions()
     -- the first call only opens the frame in 3.3.5a, the second selects the panel
-    _G.InterfaceOptionsFrame_OpenToCategory(addonName)
-    _G.InterfaceOptionsFrame_OpenToCategory(addonName)
+    _G.InterfaceOptionsFrame_OpenToCategory(TITLE)
+    _G.InterfaceOptionsFrame_OpenToCategory(TITLE)
 end
 
 function SkomsArenaStats:RegisterOptionsTable()
     AceConfig:RegisterOptionsTable(addonName, {
-        name = addonName,
+        name = TITLE,
         descStyle = "inline",
         handler = SkomsArenaStats,
         type = "group",
@@ -224,8 +225,8 @@ function SkomsArenaStats:RegisterOptionsTable()
             About = ns.AboutGroup(99)
         }
     })
-    AceConfigDialog:AddToBlizOptions(addonName, nil, nil, "General")
-    AceConfigDialog:AddToBlizOptions(addonName, "Profiles", addonName,
+    AceConfigDialog:AddToBlizOptions(addonName, TITLE, nil, "General")
+    AceConfigDialog:AddToBlizOptions(addonName, "Profiles", TITLE,
                                      "Profiles")
-    AceConfigDialog:AddToBlizOptions(addonName, "About", addonName, "About")
+    AceConfigDialog:AddToBlizOptions(addonName, "About", TITLE, "About")
 end

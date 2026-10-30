@@ -60,6 +60,7 @@ function SkomsArenaStats:OnEnable()
     self:RegisterEvent("UPDATE_INSTANCE_INFO")
 
     self:TagRecordedSoloQueue()
+    self:DropSpectatedGames()
     self:DrawMinimapIcon()
     self:RegisterOptionsTable()
 
@@ -80,6 +81,8 @@ function SkomsArenaStats:PLAYER_ENTERING_WORLD()
     self:CheckArenaLeft()
     self:UpdateCharacterSnapshot()
 end
+
+local SOLO_QUEUE_TEAM_NAME = "Solo Queue"
 
 -- Outside an arena, an unfinished match (left early, or a pending one from a
 -- previous session) is dropped so the next arena starts clean
@@ -139,7 +142,6 @@ end
 
 -- Warmane plays Solo Queue as 3v3 matches between teams named "Solo Queue";
 -- file them under the SoloQ bracket (the client's 5v5 team slot) instead
-local SOLO_QUEUE_TEAM_NAME = "Solo Queue"
 
 function SkomsArenaStats:TagSoloQueue(stats)
     if stats["teamName"] == SOLO_QUEUE_TEAM_NAME or stats["enemyTeamName"] ==
@@ -158,18 +160,41 @@ function SkomsArenaStats:TagRecordedSoloQueue()
     end
 end
 
+-- Spectated arenas were recorded before: you were on neither team.
+-- Games left early (a short-lived recording, no details) go too.
+function SkomsArenaStats:DropSpectatedGames()
+    for _, charData in pairs(self.db.sv.char or {}) do
+        local history = charData.history or {}
+        for i = #history, 1, -1 do
+            if history[i]["teamColor"] == '' or history[i]["leftEarly"] then table.remove(history, i) end
+        end
+    end
+end
+
+-- Scoreboard names can carry a realm suffix
+local function IsMe(name)
+    return name and name:match("^[^%-]+") == UnitName("player")
+end
+
+-- false while spectating: you are on neither team of the scoreboard
+local function OnScoreboard()
+    for i = 1, GetNumBattlefieldScores() do
+        if IsMe((GetBattlefieldScore(i))) then return true end
+    end
+    return false
+end
+
 function SkomsArenaStats:SetLastArenaRankingData()
 
     local playerTeam = ''
     local greenTeam = {}
     local goldTeam = {}
-    local myName = UnitName("player")
     local numScores = GetNumBattlefieldScores()
 
     for i = 1, numScores do
         local data = {GetBattlefieldScore(i)}
         local teamIndex = data[6]
-        if data[1] == myName then
+        if IsMe(data[1]) then
             if teamIndex == 0 then
                 playerTeam = 'GREEN'
             else
@@ -298,12 +323,17 @@ function SkomsArenaStats:UPDATE_BATTLEFIELD_SCORE()
             self.current["stats"]["winnerColor"] = "GOLD";
         end
         self:SetLastArenaRankingData()
-        if GetNumBattlefieldScores() ~= 0 then self:RecordArena() end
+        if self.current["stats"]["teamColor"] == '' then
+            -- a spectated arena is not yours
+            self:Reset()
+        elseif GetNumBattlefieldScores() ~= 0 then
+            self:RecordArena()
+        end
     end
 end
 
 function SkomsArenaStats:ScoreDataReady()
-    if GetNumBattlefieldScores() == 0 then return false end
+    if GetNumBattlefieldScores() == 0 or not OnScoreboard() then return false end
     if not self.current["stats"]["isRanked"] then return true end
     for i = 0, 1 do
         local _, _, _, teamMMR = GetBattlefieldTeamInfo(i)
@@ -371,7 +401,9 @@ end
 
 function SkomsArenaStats:ToggleMinimapButton()
     self.db.profile.minimapButton.hide = not self.db.profile.minimapButton.hide
-    if self.db.profile.minimapButton.hide then
+    -- with another Skom's addon, the shared Skom's button (launcher.lua) replaces this one
+    if self.db.profile.minimapButton.hide or
+        (_G.SkomsLauncher and _G.SkomsLauncher.active) then
         libDBIcon:Hide(addonName)
     else
         libDBIcon:Show(addonName)

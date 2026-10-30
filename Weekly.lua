@@ -37,6 +37,13 @@ local function RoundToHalfHour(timestamp)
     return math.floor((timestamp + 900) / 1800) * 1800
 end
 
+-- the reset hour read from the game can move by a few hours between logins
+-- (it said 04:00 on one character and 07:00 on the next), so two week starts
+-- less than a day apart are the same week
+local function SameWeek(a, b)
+    return a ~= nil and b ~= nil and math.abs(a - b) < DAY
+end
+
 function SkomsArenaStats:GetResetHourMinute()
     local reset = self.db.global.weeklyReset
     if reset.autoHour then
@@ -122,7 +129,7 @@ function SkomsArenaStats:GetCharacterRecord()
     record.lastSeen = _G.time()
 
     local weekStart = self:GetWeekStart()
-    if record.week.start ~= weekStart then
+    if not SameWeek(record.week.start, weekStart) then
         record.week = {start = weekStart, honorGained = 0}
     end
     return record
@@ -236,12 +243,6 @@ end
 -- Warmane's SoloQ team ("3vs3 Solo Queue") is shared by everyone queueing, so
 -- its team counters are meaningless: only your own games count there
 local SOLO_QUEUE_SIZE = 5
-
--- The weekly games shown against the 10 needed
-local function WeeklyGames(size, team)
-    if size == SOLO_QUEUE_SIZE then return team.playerPlayed or 0 end
-    return team.weekPlayed or 0
-end
 
 -- Your own games needed for a team's share; whole numbers, so 3 of 10 is enough
 local function RequiredPlayerGames(week)
@@ -378,24 +379,20 @@ end
 -- This Week tab
 
 local WEEK_COLUMNS = {
-    {L["Character"], 120}, {L["Games"], 50}, {L["W - L"], 60},
-    {L["Win %"], 50}, {L["Rating +/-"], 70}, {L["Honor earned"], 90},
-    {L["Expected Points"], 100}, {UI.BRACKET_LABELS[2], 115},
-    {UI.BRACKET_LABELS[3], 115}, {UI.BRACKET_LABELS[5], 60}
+    {L["Character"], 155}, {L["Games"], 50}, {L["W - L"], 60},
+    {L["Win %"], 50}, {L["Rating +/-"], 75}, {L["Honor earned"], 90},
+    {L["Expected Points"], 110}, {UI.BRACKET_LABELS[2], 80},
+    {UI.BRACKET_LABELS[3], 80}, {UI.BRACKET_LABELS[5], 80}
 }
 
--- weekly games "x/10": green once the week pays arena points
+-- your games / the games you need this week: green once the week pays arena
+-- points (the team's own count is in the tooltip)
 local function WeeklyTeamCell(size, team, isCurrentWeek)
     if not team or not isCurrentWeek then
         return {text = "-", color = UI.colors.dim}
     end
-    local text = string.format("%d/%d", WeeklyGames(size, team), MIN_WEEKLY_GAMES)
-    -- a team bracket also needs your share of its games
-    if size ~= SOLO_QUEUE_SIZE then
-        local week = team.weekPlayed or 0
-        text = text .. string.format("  " .. L["you %d/%d"], team.playerPlayed or 0,
-                                     RequiredPlayerGames(math.max(week, MIN_WEEKLY_GAMES)))
-    end
+    local played = team.playerPlayed or 0
+    local text = string.format("%d/%d", played, played + GamesNeeded(size, team))
     return {
         text = text,
         color = IsEligible(size, team) and UI.colors.good or UI.colors.text
@@ -434,10 +431,10 @@ function SkomsArenaStats:RefreshWeekPage()
     local data = {}
     for _, key in ipairs(self:GetSortedCharacterKeys()) do
         local record = self.db.global.characters[key]
-        local isCurrentWeek = record.week and record.week.start == weekStart
+        local isCurrentWeek = record.week and SameWeek(record.week.start, weekStart)
         local honor = isCurrentWeek and record.week.honorGained or 0
         local results = self:GetWeeklyArenaResults(key, weekStart)
-        local teamsCurrent = record.teamsWeek == weekStart
+        local teamsCurrent = SameWeek(record.teamsWeek, weekStart)
         local expected = self:GetExpectedArenaPoints(record,
                                                                 teamsCurrent)
 
@@ -507,7 +504,7 @@ function SkomsArenaStats:RefreshCharactersPage()
     local data = {}
     for _, key in ipairs(self:GetSortedCharacterKeys()) do
         local record = self.db.global.characters[key]
-        local teamsCurrent = record.teamsWeek == weekStart
+        local teamsCurrent = SameWeek(record.teamsWeek, weekStart)
         local lastSeen = {text = TimeAgo(record.lastSeen), color = UI.colors.dim}
         if key == currentKey then
             lastSeen = {text = L["Online"], color = UI.colors.good}

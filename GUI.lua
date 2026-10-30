@@ -5,7 +5,7 @@ local SkomsArenaStats = _G.LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = _G.LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local sbyte = _G.string.byte
 
-local filters = {bracket = 0, arenaType = 0, name = ""}
+local filters = {bracket = 0, arenaType = 0, period = 0, name = ""}
 local rows, filtered = {}, {}
 local mainFrame, history
 
@@ -645,7 +645,7 @@ function SkomsArenaStats:BuildHistoryPage(page)
         {value = 0, label = _G.ALL}, {value = 2, label = UI.BRACKET_LABELS[2]},
         {value = 3, label = UI.BRACKET_LABELS[3]},
         {value = 5, label = UI.BRACKET_LABELS[5]}
-    }, 64, function(value)
+    }, 56, function(value)
         filters.bracket = value
         SkomsArenaStats:RefreshHistoryList()
     end)
@@ -654,13 +654,24 @@ function SkomsArenaStats:BuildHistoryPage(page)
     history.arenaType = UI.CreateSegmented(page, {
         {value = 0, label = _G.ALL}, {value = true, label = L["Rated"]},
         {value = false, label = L["Skirmish"]}
-    }, 80, function(value)
+    }, 70, function(value)
         filters.arenaType = value
         SkomsArenaStats:RefreshHistoryList()
     end)
-    history.arenaType.frame:SetPoint("LEFT", history.bracket.frame, "RIGHT", 16, 0)
+    history.arenaType.frame:SetPoint("LEFT", history.bracket.frame, "RIGHT", 12, 0)
 
-    history.search = UI.CreateSearchBox(page, 200, L["Filter By Name"],
+    -- Season = everything recorded (the history is emptied by a purge, not by the game)
+    history.period = UI.CreateSegmented(page, {
+        {value = 1, label = L["Today"]}, {value = 2, label = L["This week"]},
+        {value = 0, label = L["Season"]}
+    }, 66, function(value)
+        filters.period = value
+        SkomsArenaStats:RefreshHistoryList()
+    end)
+    history.period.frame:SetPoint("LEFT", history.arenaType.frame, "RIGHT", 12, 0)
+    history.period:SetValue(0)
+
+    history.search = UI.CreateSearchBox(page, 180, L["Filter By Name"],
                                         function(text)
         filters.name = text
         SkomsArenaStats:RefreshHistoryList()
@@ -729,6 +740,9 @@ function SkomsArenaStats:EnemyNameFilterRow(row)
 end
 
 function SkomsArenaStats:FilterRow(row)
+    if self.historySince and (row["endTime"] or 0) < self.historySince then
+        return true
+    end
     if (filters.bracket ~= 0 and row["teamSize"] ~= filters.bracket) then
         return true
     end
@@ -743,6 +757,13 @@ end
 
 function SkomsArenaStats:SortTable()
     filtered = {}
+    self.historySince = nil
+    if filters.period == 1 then
+        local t = _G.date("*t")
+        self.historySince = _G.time({year = t.year, month = t.month, day = t.day, hour = 0})
+    elseif filters.period == 2 then
+        self.historySince = self:GetWeekStart()
+    end
     for i = 1, #rows do
         local row = rows[i]
         if (not self:FilterRow(row)) then table.insert(filtered, row) end
